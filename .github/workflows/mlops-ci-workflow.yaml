@@ -24,7 +24,7 @@ jobs:
       - name: Step 0 - Install MLflow
         run: |
           docker pull ghcr.io/mlflow/mlflow:latest
-          docker run -d -p 5555:5000 --name mlflow-tracking-server ghcr.io/mlflow/mlflow:latest
+          docker run -d -p 5555:5000 --name mlflow-tracking-server ghcr.io/mlflow/mlflow:latest \
           mlflow server --host 0.0.0.0 --backend-store-uri sqlite:///mlflow.db --default-artifact-root /tmp/mlruns
 
       - name: Step 1 - Data Processing
