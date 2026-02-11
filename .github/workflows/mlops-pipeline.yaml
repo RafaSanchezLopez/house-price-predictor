@@ -150,9 +150,17 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}          
 
+      - name: Build Docker image (local)
+        run: |
+          docker build -t house-price-model:${COMMIT_HASH} -t docker.io/${{ vars.DOCKERHUB_USERNAME }}/house-price-model:${COMMIT_HASH} .
+
+      - name: List local images (debug)
+        run: |
+          docker images --format '{{.Repository}}:{{.Tag}}' | sort
+
       - name: Build and test Docker image
         run: |
-          docker run -d -p 8000:8000 --name test-api docker.io/${{ vars.DOCKERHUB_USERNAME }}/house-price-model:${COMMIT_HASH}
+          docker run -d -p 8000:8000 --name test-api house-price-model:${COMMIT_HASH}
           for i in {1..10}; do
             curl -f http://localhost:8000/health && break || sleep 5;
           done
