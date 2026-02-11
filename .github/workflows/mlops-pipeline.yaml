@@ -143,6 +143,13 @@ jobs:
         run: |
           echo "COMMIT_HASH=${GITHUB_SHA:0:7}" >> $GITHUB_ENV
 
+      - name: Log in to DockerHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: docker.io
+          username: ${{ vars.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}          
+
       - name: Build and test Docker image
         run: |
           docker run -d -p 8000:8000 --name test-api docker.io/${{ vars.DOCKERHUB_USERNAME }}/house-price-model:${COMMIT_HASH}
@@ -155,13 +162,6 @@ jobs:
         run: |
           docker stop test-api || true
           docker rm test-api || true
-
-      - name: Log in to DockerHub Container Registry
-        uses: docker/login-action@v2
-        with:
-          registry: docker.io
-          username: ${{ vars.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Push Docker image to Docker Hub
         run: |
